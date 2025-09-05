@@ -1,0 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public abstract class Character : MonoBehaviour
+{
+    abstract protected void Move();
+    abstract protected void Dead();
+}
