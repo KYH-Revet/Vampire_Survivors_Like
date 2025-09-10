@@ -6,7 +6,7 @@ public class TileMove : MonoBehaviour
 {
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!collision.CompareTag("Area"))
+        if (!collision.CompareTag("Area_Map"))
             return;
 
         Vector2 playerPos = Player.instance.transform.position;

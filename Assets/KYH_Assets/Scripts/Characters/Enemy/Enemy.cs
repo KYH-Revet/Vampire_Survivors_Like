@@ -6,27 +6,25 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Enemy : Character
 {
-    // Enemy Stats
-    public struct EnemyStats
-    {
-        public int health;
-        public int speed;
-        public int damage;
-        public EnemyStats(int health, int speed, int damage)
-        {
-            this.health = health;
-            this.speed = speed;
-            this.damage = damage;
-        }
-    }
-    public EnemyStats stats;
+    [Header("Enemy Stats")]
+    [SerializeField]
+    private CharacterStats stats;
     // Base Stats
     public int maxHealth = 50;
     public int speed = 3;
+    public int damage = 5;
 
+    [Header("Timers")]
     // Time when the enemy was spawned
     public float bornTime;
     public float destroyTimer = 20f;
+    public float lastAttackTime;
+    public float attackInterval = 0.5f;
+
+    [Header("Drop Item")]
+    public List<GameObject> dropItemPrefab;
+    public float dropChance = 0.5f; // 50% chance to drop an item
+    public GameObject item_Exp;
 
     // Enemy State Machine
     public enum State
@@ -34,6 +32,7 @@ public class Enemy : Character
         live,
         dead
     }
+    [Header("State Machine")]
     public State currentState;
     private void StateMachine()
     {
@@ -62,10 +61,11 @@ public class Enemy : Character
     public void Initialize()
     {
         int hp = GameManager.instance.playTime == 0 ? maxHealth : maxHealth + (int)(GameManager.instance.playTime / 60) * 10;
-        stats = new EnemyStats(hp, speed, 10);
+        stats = new CharacterStats(hp, 0, speed, damage);
 
         bornTime = GameManager.instance.playTime;
         destroyTimer = 20f;
+        lastAttackTime = attackInterval*2;
 
         currentState = State.live;
     }
@@ -80,6 +80,9 @@ public class Enemy : Character
     void Update()
     {
         StateMachine();
+
+        if (lastAttackTime <= attackInterval * 2)
+            lastAttackTime += Time.deltaTime;
     }
 
     protected override void Move()
@@ -88,14 +91,48 @@ public class Enemy : Character
 
         // Sprite Flip
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        if(dir.x > 0 && !sr.flipX || dir.x < 0 && sr.flipX)
+        if(dir.x > 0 && sr.flipX || dir.x < 0 && !sr.flipX)
             sr.flipX = !sr.flipX;
 
-        if (Vector2.Distance(transform.position, Player.instance.transform.position) > 0.2f)
+        if (Vector2.Distance(transform.position, Player.instance.transform.position) > 0.1f)
             transform.Translate(dir * stats.speed * Time.deltaTime);
+    }
+    public override void Damaged(int dmg)
+    {
+        stats.health -= dmg;
+        if (stats.health <= 0 && currentState != State.dead)
+        {
+            currentState = State.dead;
+            GetComponent<Animator>().SetTrigger("Dead");
+        }
     }
     protected override void Dead()
     {
+        // Drop Exp and Item
+        Instantiate(item_Exp, transform.position, Quaternion.identity);
+
+        // Return to object pool
         gameObject.SetActive(false);
+    }
+
+    public void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player") && currentState == State.live)
+        {
+            // Attack Cooldown Timer
+            if (lastAttackTime >= attackInterval)
+            {
+                Debug.Log("Enemy attacks Player");
+                collision.GetComponent<Player>().Damaged(stats.damage);
+                lastAttackTime = 0f;
+            }
+        }
+    }
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            lastAttackTime = 0f;
+        }
     }
 }
