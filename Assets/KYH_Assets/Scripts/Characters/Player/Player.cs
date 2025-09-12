@@ -26,7 +26,7 @@ public class Player : Character
     public int speed = 5;
 
     [Header("UI")]
-    public Slider hpBar;
+    public Slider[] hpBars;
     public TextMeshProUGUI hpText;
 
     void Awake()
@@ -48,7 +48,8 @@ public class Player : Character
     void Start()
     {
         // Initialize HP Bar
-        UIManager.UpdateHpBar(hpBar, hpText, stats.health, stats.maxHealth);
+        foreach(Slider hpBar in hpBars)
+            UIManager.UpdateHpBar(hpBar, hpText, stats.health, stats.maxHealth);
     }
 
     // Update is called once per frame
@@ -86,13 +87,33 @@ public class Player : Character
             animator.SetInteger("Direction", anim_Direction);
         }
     }
-    public override void Damaged(int dmg)
-    {
-        int left = stats.health - dmg;
-        stats.health = left >= 0 ? left: 0;
 
-        // Update HP Bar
-        UIManager.UpdateHpBar(hpBar, hpText, stats.health, stats.maxHealth);
+    public override void HpControl(int value, HpChangeType hpChangeType)
+    {
+        // Validate input
+        if (value < 0)
+        {
+            Debug.LogWarning("HpControl value should be non-negative.");
+            return;
+        }
+
+        // Only allow HP change during Playing state
+        if (GameManager.gameState == GameManager.GameState.Playing)
+        {
+            // Change HP
+            switch (hpChangeType)
+            {
+                case HpChangeType.Heal:
+                    stats.health = Mathf.Clamp(stats.health + value, 0, stats.maxHealth);
+                    break;
+                case HpChangeType.Damage:
+                    stats.health = Mathf.Clamp(stats.health - value, 0, stats.maxHealth);
+                    break;
+            }
+            // Update HP Bar
+            foreach (Slider hpBar in hpBars)
+                UIManager.UpdateHpBar(hpBar, hpText, stats.health, stats.maxHealth);
+        }
 
         // Game Over
         if (stats.health == 0)

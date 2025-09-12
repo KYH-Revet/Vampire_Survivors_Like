@@ -33,10 +33,13 @@ public class Enemy : Character
         dead
     }
     [Header("State Machine")]
-    public State currentState;
+    public State enemyState;
     private void StateMachine()
     {
-        switch (currentState)
+        if(GameManager.gameState != GameManager.GameState.Playing)
+            return;
+
+        switch (enemyState)
         {
             case State.live:
                 Move();
@@ -44,9 +47,12 @@ public class Enemy : Character
                 // Auto destroy after 10 seconds (For test)
                 if (GameManager.instance.playTime - bornTime > 10f)
                 {
-                    currentState = State.dead;
+                    enemyState = State.dead;
                     GetComponent<Animator>().SetTrigger("Dead");
                 }
+
+                if (lastAttackTime <= attackInterval)
+                    lastAttackTime += Time.deltaTime;
                 break;
             case State.dead:
                 destroyTimer -= Time.deltaTime;
@@ -65,9 +71,9 @@ public class Enemy : Character
 
         bornTime = GameManager.instance.playTime;
         destroyTimer = 20f;
-        lastAttackTime = attackInterval*2;
+        lastAttackTime = attackInterval;
 
-        currentState = State.live;
+        enemyState = State.live;
     }
 
     // Start is called before the first frame update
@@ -80,9 +86,6 @@ public class Enemy : Character
     void Update()
     {
         StateMachine();
-
-        if (lastAttackTime <= attackInterval * 2)
-            lastAttackTime += Time.deltaTime;
     }
 
     protected override void Move()
@@ -91,20 +94,11 @@ public class Enemy : Character
 
         // Sprite Flip
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        if(dir.x > 0 && sr.flipX || dir.x < 0 && !sr.flipX)
+        if (dir.x > 0 && sr.flipX || dir.x < 0 && !sr.flipX)
             sr.flipX = !sr.flipX;
 
         if (Vector2.Distance(transform.position, Player.instance.transform.position) > 0.1f)
             transform.Translate(dir * stats.speed * Time.deltaTime);
-    }
-    public override void Damaged(int dmg)
-    {
-        stats.health -= dmg;
-        if (stats.health <= 0 && currentState != State.dead)
-        {
-            currentState = State.dead;
-            GetComponent<Animator>().SetTrigger("Dead");
-        }
     }
     protected override void Dead()
     {
@@ -114,16 +108,38 @@ public class Enemy : Character
         // Return to object pool
         gameObject.SetActive(false);
     }
+    public override void HpControl(int value, HpChangeType hpChangeType)
+    {
+        if (enemyState == State.live)
+        {
+            switch (hpChangeType)
+            {
+                case HpChangeType.Heal:
+                    stats.health = Mathf.Clamp(stats.health + value, 0, stats.maxHealth);
+                    break;
+                case HpChangeType.Damage:
+                    stats.health = Mathf.Clamp(stats.health - value, 0, stats.maxHealth);
+
+                    // Dead Check
+                    if (stats.health <= 0)
+                    {
+                        enemyState = State.dead;
+                        GetComponent<Animator>().SetTrigger("Dead");
+                    }
+                    break;
+            }
+        }
+    }
 
     public void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && currentState == State.live)
+        if (collision.CompareTag("Player") && enemyState == State.live)
         {
             // Attack Cooldown Timer
             if (lastAttackTime >= attackInterval)
             {
                 Debug.Log("Enemy attacks Player");
-                collision.GetComponent<Player>().Damaged(stats.damage);
+                collision.GetComponent<Player>().HpControl(stats.damage, HpChangeType.Damage);
                 lastAttackTime = 0f;
             }
         }

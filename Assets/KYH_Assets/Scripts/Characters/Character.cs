@@ -23,7 +23,14 @@ public abstract class Character : MonoBehaviour
             this.damage = damage;
         }
     }
-    abstract protected void Move();
-    abstract public void Damaged(int dmg);
+    abstract protected void Move();    
     abstract protected void Dead();
+
+    // Hp Change
+    public enum HpChangeType
+    {
+        Heal,
+        Damage
+    }
+    abstract public void HpControl(int value, HpChangeType hpChangeType);
 }

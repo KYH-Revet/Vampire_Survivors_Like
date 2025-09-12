@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static GameManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class GameManager : MonoBehaviour
         Paused,
         GameOver
     }
-    public static GameState currentState;
+    public static GameState gameState;
     
     // Level, Exp
     public static int level = 1;
@@ -38,27 +39,22 @@ public class GameManager : MonoBehaviour
     public float playTime = 0f;    
     public float testLevelUpTimer = 0f; // For testing level up
 
+    // Unity Functions
     private void Awake()
     {
         // Singleton
         Instance();
-
-        currentState = GameState.Menu;
     }
-
-    // Start is called before the first frame update
     void Start()
     {
-        
+        gameState = GameState.Playing;
     }
-
-    // Update is called once per frame
     void Update()
     {
         playTime += Time.deltaTime;
         UIManager.instance.UpdatePlayTime(playTime);
 
-
+        
         testLevelUpTimer += Time.deltaTime;
         if(testLevelUpTimer >= 5f) // Every 5 seconds
         {
@@ -72,7 +68,7 @@ public class GameManager : MonoBehaviour
     // Change Game State
     public static void ChangeState(GameState newState)
     {
-        currentState = newState;
+        gameState = newState;
         // Additional logic for state change can be added here
     }
 
@@ -85,6 +81,7 @@ public class GameManager : MonoBehaviour
         {
             exp -= maxExp;
             maxExp += ++level * 10;
+            
             Debug.Log("Leveled up to " + level);
         }
     }

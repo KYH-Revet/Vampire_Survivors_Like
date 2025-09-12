@@ -42,7 +42,13 @@ public class UIManager : MonoBehaviour
         int seconds = (int)(time % 60);
         playTimeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
-
+    public void HideSlider(Slider target)
+    {
+        if (target.value == 1)
+            StartCoroutine(HideTimer(target.gameObject));
+        else
+            target.gameObject.SetActive(true);
+    }
     public static void UpdateHpBar(Slider hpBar, TextMeshProUGUI hpText, int currentHP, int maxHP)
     {
         if (hpBar == null || hpText == null)
@@ -53,5 +59,11 @@ public class UIManager : MonoBehaviour
         hpBar.maxValue = maxHP;
         hpBar.value = currentHP >= 0 ? currentHP : 0;
         hpText.text = currentHP + "/" + maxHP;
+    }
+
+    IEnumerator HideTimer(GameObject target)
+    {
+        yield return new WaitForSeconds(2f);
+        target.gameObject.SetActive(false);
     }
 }
