@@ -21,7 +21,7 @@ public class Player : Character
     public GameObject model;
 
     [Header("Stats")]
-    CharacterStats stats;
+    public CharacterStats playerStats;
     public int health = 100;
     public int speed = 5;
 
@@ -35,7 +35,7 @@ public class Player : Character
         Instance();
 
         // Initialize stats
-        stats = new CharacterStats(health, 0, speed, 0);
+        playerStats = new CharacterStats(health, 0, speed, 0);
 
         // Get Animator component from model
         if (model != null)
@@ -43,21 +43,19 @@ public class Player : Character
         if(animator == null)
             Debug.LogError("Animator component not found on the model.");
     }
-
     // Start is called before the first frame update
     void Start()
     {
         // Initialize HP Bar
         foreach(Slider hpBar in hpBars)
-            UIManager.UpdateHpBar(hpBar, hpText, stats.health, stats.maxHealth);
+            UIManager.UpdateHpBar(hpBar, hpText, playerStats.health, playerStats.maxHealth);
     }
-
     // Update is called once per frame
     void Update()
     {
         // Speed 변경 감지 (Test 용)
-        if (speed != stats.speed)
-            stats.speed = speed;
+        if (speed != playerStats.speed)
+            playerStats.speed = speed;
 
         // Value of Player input
         Move();        
@@ -68,7 +66,7 @@ public class Player : Character
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector2 dir = new Vector2(h, v).normalized;
-        transform.Translate(dir * stats.speed * Time.deltaTime);
+        transform.Translate(dir * playerStats.speed * Time.deltaTime);
 
         // Animation
         if (dir.magnitude > 0)
@@ -87,7 +85,12 @@ public class Player : Character
             animator.SetInteger("Direction", anim_Direction);
         }
     }
-
+    protected override void Dead()
+    {
+        // Game Over
+        GameManager.ChangeState(GameManager.GameState.GameOver);
+        Debug.Log("Game Over");
+    }
     public override void HpControl(int value, HpChangeType hpChangeType)
     {
         // Validate input
@@ -104,25 +107,19 @@ public class Player : Character
             switch (hpChangeType)
             {
                 case HpChangeType.Heal:
-                    stats.health = Mathf.Clamp(stats.health + value, 0, stats.maxHealth);
+                    playerStats.health = Mathf.Clamp(playerStats.health + value, 0, playerStats.maxHealth);
                     break;
                 case HpChangeType.Damage:
-                    stats.health = Mathf.Clamp(stats.health - value, 0, stats.maxHealth);
+                    playerStats.health = Mathf.Clamp(playerStats.health - value, 0, playerStats.maxHealth);
                     break;
             }
             // Update HP Bar
             foreach (Slider hpBar in hpBars)
-                UIManager.UpdateHpBar(hpBar, hpText, stats.health, stats.maxHealth);
+                UIManager.UpdateHpBar(hpBar, hpText, playerStats.health, playerStats.maxHealth);
         }
 
         // Game Over
-        if (stats.health == 0)
+        if (playerStats.health == 0)
             GameManager.ChangeState(GameManager.GameState.GameOver);
-    }
-    protected override void Dead()
-    {
-        // Game Over
-        GameManager.ChangeState(GameManager.GameState.GameOver);
-        Debug.Log("Game Over");
     }
 }

@@ -81,7 +81,8 @@ public class GameManager : MonoBehaviour
         {
             exp -= maxExp;
             maxExp += ++level * 10;
-            
+            Player player = Player.instance;
+            player.HpControl(player.playerStats.maxHealth / 10, Character.HpChangeType.Heal);
             Debug.Log("Leveled up to " + level);
         }
     }
