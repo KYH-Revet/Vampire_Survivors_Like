@@ -1,7 +1,7 @@
 # Vampire_Survivors_Like
 ## Todo: Item
 ### 1. Item Type
-#### Attack
+#### Weapons
 - Player Base Attack: Take one from Mille or Shooting type
 - Close Range: Area Scan
   - Draw circle
