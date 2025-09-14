@@ -38,3 +38,23 @@
   - Exp: 100%
   - Heal: 5%
   - Bonus reward chance: When the boss is dead
+---
+## Item Management
+### Drop Item
+- Exp
+  - Life Time: 3 minute
+  - Drop probability: 100%
+  - Use Object Poolling
+    - min: 100(Generated at startup)
+    - max: 300
+- Heal
+  - Life Time: 3 minute
+  - Drop probability: 10%
+- magnet
+  - Life Time: infinity
+  - Drop probability: 3%
+- Reward
+  - Lift Time: infinity
+  - Drop probability:
+    - Boss: 100%
+    - other: 1%(or counting kill: 200)
