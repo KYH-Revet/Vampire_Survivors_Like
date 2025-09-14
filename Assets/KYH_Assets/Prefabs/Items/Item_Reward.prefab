@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 6364936658556892559}
   - component: {fileID: 7487815829955672849}
   - component: {fileID: 2862732325832152439}
-  - component: {fileID: 4487364990577250725}
+  - component: {fileID: 751441152102378951}
   m_Layer: 0
-  m_Name: Item_Exp
+  m_Name: Item_Reward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 362616440, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
+  m_Sprite: {fileID: -38345435, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -121,7 +121,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &4487364990577250725
+--- !u!114 &751441152102378951
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,8 +130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1188416157497485080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2083709fed3ca134ab48bd09882161f7, type: 3}
+  m_Script: {fileID: 11500000, guid: 97522c930fa33544a8cc444a78f272ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemType: 2
-  expAmount: 10

@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Ground
   - Area_Map
-  - Area_Exp
+  - Area_DropItem
   layers:
   - Default
   - TransparentFX

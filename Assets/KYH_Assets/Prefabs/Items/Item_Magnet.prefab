@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 6364936658556892559}
   - component: {fileID: 7487815829955672849}
   - component: {fileID: 2862732325832152439}
-  - component: {fileID: 4487364990577250725}
+  - component: {fileID: -2566969085883730566}
   m_Layer: 0
-  m_Name: Item_Exp
+  m_Name: Item_Magnet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 362616440, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
+  m_Sprite: {fileID: 1997828774, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -121,7 +121,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &4487364990577250725
+--- !u!114 &-2566969085883730566
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,8 +130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1188416157497485080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2083709fed3ca134ab48bd09882161f7, type: 3}
+  m_Script: {fileID: 11500000, guid: b3788d110149e7b44988be65eb855f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemType: 2
-  expAmount: 10
