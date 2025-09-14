@@ -138,7 +138,6 @@ public class Enemy : Character
             // Attack Cooldown Timer
             if (lastAttackTime >= attackInterval)
             {
-                Debug.Log("Enemy attacks Player");
                 collision.GetComponent<Player>().HpControl(stats.damage, HpChangeType.Damage);
                 lastAttackTime = 0f;
             }

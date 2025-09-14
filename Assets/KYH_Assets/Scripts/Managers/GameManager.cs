@@ -40,13 +40,11 @@ public class GameManager : MonoBehaviour
     public float testLevelUpTimer = 0f; // For testing level up
 
     // Unity Functions
-    private void Awake()
+    void Awake()
     {
         // Singleton
         Instance();
-    }
-    void Start()
-    {
+
         gameState = GameState.Playing;
     }
     void Update()
@@ -83,7 +81,6 @@ public class GameManager : MonoBehaviour
             maxExp += ++level * 10;
             Player player = Player.instance;
             player.HpControl(player.playerStats.maxHealth / 10, Character.HpChangeType.Heal);
-            Debug.Log("Leveled up to " + level);
         }
     }
 }

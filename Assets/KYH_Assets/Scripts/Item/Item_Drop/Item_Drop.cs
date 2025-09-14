@@ -30,14 +30,14 @@ public class Item_Drop : Item
     }
     protected void MoveToPlayer()
     {
-        if (Player.instance == null || GameManager.gameState == GameManager.GameState.Playing)
+        if (Player.instance == null || GameManager.gameState != GameManager.GameState.Playing)
             return;
         Vector2 dir = (Player.instance.transform.position - transform.position).normalized;
         float speed = Mathf.Lerp(minSpeed, maxSpeed, 0.5f);
         transform.Translate(dir * speed * Time.deltaTime);
     }
 
-    protected void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         switch (collision.tag)
         {
