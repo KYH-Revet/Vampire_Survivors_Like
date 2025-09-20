@@ -36,7 +36,6 @@ public class Item_Drop : Item
         float speed = Mathf.Lerp(minSpeed, maxSpeed, 0.5f);
         transform.Translate(dir * speed * Time.deltaTime);
     }
-
     void OnTriggerEnter2D(Collider2D collision)
     {
         switch (collision.tag)
@@ -46,7 +45,7 @@ public class Item_Drop : Item
                 break;
             case "Player":
                 Use();
-                Destroy(gameObject);
+                ObjPool_ItemExp.instance.ReturnToPool(gameObject);
                 break;
         }
     }

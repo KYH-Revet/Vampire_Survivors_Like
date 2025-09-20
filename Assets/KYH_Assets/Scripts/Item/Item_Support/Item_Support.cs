@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item_Support : MonoBehaviour
+public class Item_Support : Item
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Initialize()
     {
-        
+        itemType = ItemType.Support;
+    }
+    public override void Use()
+    {
+        throw new System.NotImplementedException();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if(GameManager.gameState == GameManager.GameState.Playing)
+            Use();
     }
 }
