@@ -35,7 +35,12 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
 
     public void InitPool(GameObject prefab, Transform parent, int poolSize)
     {
-        for(int i = 0; i < poolSize; i++)
+        if(prefab == null)
+        {
+            Debug.LogWarning("Prefab is null. Cannot initialize pool.");
+            return;
+        }
+        for (int i = 0; i < poolSize; i++)
         {
             GameObject obj = Instantiate(prefab);
             obj.transform.parent = parent;
