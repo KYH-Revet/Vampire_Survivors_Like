@@ -36,7 +36,7 @@ public class Item_Drop : Item
         float speed = Mathf.Lerp(minSpeed, maxSpeed, 0.5f);
         transform.Translate(dir * speed * Time.deltaTime);
     }
-    void OnTriggerEnter2D(Collider2D collision)
+    protected void OnTriggerEnter2D(Collider2D collision)
     {
         switch (collision.tag)
         {

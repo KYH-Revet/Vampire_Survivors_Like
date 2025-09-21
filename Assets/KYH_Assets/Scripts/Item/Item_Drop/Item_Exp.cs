@@ -5,14 +5,14 @@ using UnityEngine;
 public class Item_Exp : Item_Drop
 {
     public int expAmount;
-    float lifeTime;
+    //float lifeTime;
 
     public override void Initialize()
     {
         base.Initialize();
 
         expAmount = 10;
-        lifeTime = 10f; // 3 minutes (test 10s)
+        //lifeTime = 10f; // 3 minutes (test 10s)
     }
 
     public override void Use()

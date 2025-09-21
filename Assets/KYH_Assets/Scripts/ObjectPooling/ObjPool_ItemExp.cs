@@ -21,7 +21,7 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
 
     [Header("Object Pools")]
     [SerializeField]
-    List<GameObject> expPool;
+    Queue<GameObject> expPool;
     public Transform expParent;
 
     void Awake()
@@ -30,7 +30,7 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
         Instance();
 
         // Initialize Pools
-        expPool = new List<GameObject>();
+        expPool = new Queue<GameObject>();
         InitPool(obj_Exp, expParent,  expPoolSize);
     }
 
@@ -43,37 +43,33 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
         }
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject obj = Instantiate(prefab);
-            obj.transform.parent = parent;
+            GameObject obj = Instantiate(prefab, parent);
             obj.SetActive(false);
-            expPool.Add(obj);
+            expPool.Enqueue(obj);
         }
     }
     public GameObject GetPooledObject()
     {
-        foreach(GameObject obj in expPool)
+        GameObject obj;
+        if (expPool.Count > 0)
         {
-            if (!obj.activeInHierarchy)
-            {
-                obj.GetComponent<Item>().Initialize();
-                return obj;
-            }
+            obj = expPool.Dequeue();
+            obj.GetComponent<Item>().Initialize();
+            obj.SetActive(true);
         }
-        GameObject exp = Instantiate(obj_Exp);
-        exp.transform.parent = expParent;
-        expPool.Add(exp);
-        return exp;
+        else
+            obj = Instantiate(obj_Exp, expParent);     
+        return obj;
     }
     public void ReturnToPool(GameObject obj)
     {
-        if (expPool.Count <= expPoolSizeMax)
-            obj.SetActive(false);
-        else
+        if (expParent.childCount <= expPoolSizeMax)
         {
-            Debug.Log(obj.name + " is Destroyed from pool.");
-            expPool.Remove(obj);
-            Destroy(obj);
+            obj.SetActive(false);
+            expPool.Enqueue(obj);
         }
+        else
+            Destroy(obj);
     }
     public void ClearPool()
     {
