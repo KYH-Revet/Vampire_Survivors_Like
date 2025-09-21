@@ -5,12 +5,15 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     public List<GameObject> enemyPrefabs; // List of enemy prefabs to spawn
-    public List<GameObject> enemyPool;
     float spawnTime = 0f;
 
     private void Awake()
     {
-        enemyPool = new List<GameObject>();
+        
+    }
+    void Start()
+    {
+        
     }
     void Update()
     {
@@ -72,23 +75,13 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        foreach (GameObject enemy in enemyPool)
+        GameObject enemy = ObjPool_Enemy.instance.GetPooledObject();
+        if (enemy != null)
         {
-            if (!enemy.activeInHierarchy)
-            {
-                Debug.Log(enemy.name + " is Reusing enemy from pool.");
-                enemy.transform.position = position;
-                enemy.SetActive(true);
-                enemy.GetComponent<Enemy>().Initialize();
-                return;
-            }
+            Debug.Log(enemy.name + " is Reusing enemy from ObjPool_Enemy.");
+            enemy.transform.position = position;
+            enemy.SetActive(true);
+            enemy.GetComponent<Enemy>().Initialize();
         }
-
-        // Instantiate the selected enemy at the specified position with no rotation
-        GameObject newEnemy = Instantiate(enemyPrefabs[enemyCount], position, Quaternion.identity);
-        // Set the parent of the newly spawned enemy to the enemy pool for organization
-        newEnemy.transform.SetParent(transform);
-        // Add the new enemy to the pool
-        enemyPool.Add(newEnemy);
     }
 }

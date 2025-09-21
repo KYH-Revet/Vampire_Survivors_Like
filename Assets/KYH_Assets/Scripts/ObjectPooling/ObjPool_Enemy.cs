@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyObjPooling : MonoBehaviour, IObjPooling
+public class ObjPool_Enemy : MonoBehaviour, IObjPooling
 {
     // Singleton Pattern
-    public static EnemyObjPooling instance;
+    public static ObjPool_Enemy instance;
     void Instance()
     {
         if (instance == null)
@@ -14,18 +14,23 @@ public class EnemyObjPooling : MonoBehaviour, IObjPooling
             Destroy(gameObject);
     }
 
-    List<GameObject> enemyPool;
+    [Header("Enemy Obj")]
     GameObject enemyPrefab;
     public int expPoolSize = 30;
-    public int expPoolSizeMax = 100;
+    private int expPoolSizeMax = 100;
 
+    [Header("Enemy Pool")]
+    public Transform enemyParent;
+    public List<GameObject>[] enemyPool;
+    public int poolIdx = 0;
+    
     void Awake()
     {
         // Singleton Pattern
         Instance();
 
         // Initialize Pools
-        enemyPool = new List<GameObject>();
+        enemyPool = new List<GameObject>[] { new List<GameObject>(), new List<GameObject>() };
     }
 
     public void InitPool(GameObject prefab, Transform parent, int poolSize)
@@ -41,36 +46,34 @@ public class EnemyObjPooling : MonoBehaviour, IObjPooling
             GameObject obj = Instantiate(prefab);
             obj.transform.parent = parent;
             obj.SetActive(false);
-            enemyPool.Add(obj);
+            enemyPool[poolIdx].Add(obj);
         }
     }
     public GameObject GetPooledObject()
     {
         GameObject obj = null;
-        // 적 종류에 따라 다르게 처리할 방법 찾아야함
-        foreach(GameObject enemy in enemyPool)
+        foreach(GameObject enemy in enemyPool[poolIdx])
         {
             if(enemy.activeInHierarchy == false)
                 return enemy;
         }
-        obj = Instantiate(enemyPool[0]);
+        obj = Instantiate(enemyPool[poolIdx][0]);
         return obj;
     }
     public void ReturnToPool(GameObject obj)
     {
-        if (enemyPool.Count <= expPoolSizeMax)
+        if (enemyPool[poolIdx].Count <= expPoolSizeMax)
             obj.SetActive(false);
         else
         {
-            Debug.Log(obj.name + " is Destroyed from pool.");
-            enemyPool.Remove(obj);
+            enemyPool[poolIdx].Remove(obj);
             Destroy(obj);
         }
     }
     public void ClearPool()
     {
-        foreach (GameObject obj in enemyPool)
+        foreach (GameObject obj in enemyPool[poolIdx])
             Destroy(obj);
-        enemyPool.Clear();
+        enemyPool[poolIdx].Clear();
     }
 }
