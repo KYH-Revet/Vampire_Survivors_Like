@@ -25,9 +25,17 @@ public class Item_Weapon : Item
     public override void Initialize()
     {
         itemType = ItemType.Weapon;
+
+        weaponStats = new WeaponStats(1, 10, 1.5f, 1.0f, 100f);
     }
     public override void Use()
     {
         throw new System.NotImplementedException();
+    }
+
+    void Update()
+    {
+        if (GameManager.gameState == GameManager.GameState.Playing)
+            Use();
     }
 }

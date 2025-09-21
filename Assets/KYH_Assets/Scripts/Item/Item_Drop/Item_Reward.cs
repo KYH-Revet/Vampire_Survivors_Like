@@ -10,7 +10,7 @@ public class Item_Reward : Item_Drop
         Debug.Log("Item_Reward.Use(), not implemented yet");
     }
 
-    new private void OnTriggerEnter2D(Collider2D collision)
+    new protected void OnTriggerEnter2D(Collider2D collision)
     {
         if(CompareTag("Player"))
         {

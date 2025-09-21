@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Enemy : Character
 {
@@ -13,6 +12,7 @@ public class Enemy : Character
     public int maxHealth = 50;
     public int speed = 3;
     public int damage = 5;
+    public float attackRange = 1.5f;
 
     [Header("Timers")]
     // Time when the enemy was spawned
@@ -62,7 +62,6 @@ public class Enemy : Character
         }
     }
 
-
     // Initialize enemy stats based on game time
     public void Initialize()
     {
@@ -70,7 +69,6 @@ public class Enemy : Character
         stats = new CharacterStats(hp, 0, speed, damage);
 
         bornTime = GameManager.instance.playTime;
-        destroyTimer = 20f;
         lastAttackTime = attackInterval;
 
         enemyState = State.live;
@@ -97,13 +95,14 @@ public class Enemy : Character
         if (dir.x > 0 && sr.flipX || dir.x < 0 && !sr.flipX)
             sr.flipX = !sr.flipX;
 
-        if (Vector2.Distance(transform.position, Player.instance.transform.position) > 0.1f)
+        if (Vector2.Distance(transform.position, Player.instance.transform.position) > attackRange)
             transform.Translate(dir * stats.speed * Time.deltaTime);
     }
     protected override void Dead()
     {
         // Drop Exp and Item
-        Instantiate(item_Exp, transform.position, Quaternion.identity);
+        GameObject exp = ObjPool_ItemExp.instance.GetPooledObject();
+        exp.transform.position = transform.position;
 
         // Return to object pool
         gameObject.SetActive(false);

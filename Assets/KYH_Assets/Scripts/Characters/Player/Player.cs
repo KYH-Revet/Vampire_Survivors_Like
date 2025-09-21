@@ -29,19 +29,25 @@ public class Player : Character
     public Slider[] hpBars;
     public TextMeshProUGUI hpText;
 
-    void Awake()
+    void Initialize()
     {
-        // Singleton
-        Instance();
-
-        // Initialize stats
+        // stats
         playerStats = new CharacterStats(health, 0, speed, 0);
 
         // Get Animator component from model
         if (model != null)
             animator = model.GetComponent<Animator>();
-        if(animator == null)
+        if (animator == null)
             Debug.LogError("Animator component not found on the model.");
+    }
+
+    void Awake()
+    {
+        // Singleton
+        Instance();
+
+        // Initialize
+        Initialize();
     }
     // Start is called before the first frame update
     void Start()
@@ -58,7 +64,7 @@ public class Player : Character
             playerStats.speed = speed;
 
         // Value of Player input
-        Move();        
+        Move();
     }
 
     protected override void Move()
@@ -119,7 +125,7 @@ public class Player : Character
         }
 
         // Game Over
-        if (playerStats.health == 0)
+        if (playerStats.health <= 0)
             GameManager.ChangeState(GameManager.GameState.GameOver);
     }
 }
