@@ -20,7 +20,8 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
     private int expPoolSizeMax = 100;
 
     [Header("Object Pools")]
-    public List<GameObject> expPool;
+    [SerializeField]
+    List<GameObject> expPool;
     public Transform expParent;
 
     void Awake()

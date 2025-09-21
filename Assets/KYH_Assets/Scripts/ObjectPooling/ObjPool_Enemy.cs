@@ -20,8 +20,9 @@ public class ObjPool_Enemy : MonoBehaviour, IObjPooling
     private int expPoolSizeMax = 100;
 
     [Header("Enemy Pool")]
+    [SerializeField]
+    List<GameObject>[] enemyPool;
     public Transform enemyParent;
-    public List<GameObject>[] enemyPool;
     public int poolIdx = 0;
     
     void Awake()
