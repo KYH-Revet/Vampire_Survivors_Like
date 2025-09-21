@@ -14460,7 +14460,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   obj_Exp: {fileID: 1188416157497485080, guid: 8689cd4f0262acb4babf291781a38a3b, type: 3}
   expPoolSize: 30
-  expPool: []
   expParent: {fileID: 441412174}
 --- !u!4 &1733384576
 Transform:
@@ -14492,8 +14491,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expPoolSize: 30
-  enemyParent: {fileID: 0}
-  enemyPool: []
+  enemyParent: {fileID: 657542660}
+  poolIdx: 0
 --- !u!1 &1738083976
 GameObject:
   m_ObjectHideFlags: 0
@@ -18983,7 +18982,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefabs:
   - {fileID: 5078509791981561427, guid: eb926b9874adda5458d7f4fb948d3b1e, type: 3}
-  enemyPool: []
 --- !u!4 &2029757244
 Transform:
   m_ObjectHideFlags: 0

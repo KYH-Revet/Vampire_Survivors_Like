@@ -103,7 +103,6 @@ public class Enemy : Character
         // Drop Exp and Item
         GameObject exp = ObjPool_ItemExp.instance.GetPooledObject();
         exp.transform.position = transform.position;
-        exp.SetActive(true);
 
         // Return to object pool
         gameObject.SetActive(false);

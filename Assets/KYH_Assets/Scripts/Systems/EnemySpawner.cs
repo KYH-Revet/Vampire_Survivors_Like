@@ -7,14 +7,11 @@ public class EnemySpawner : MonoBehaviour
     public List<GameObject> enemyPrefabs; // List of enemy prefabs to spawn
     float spawnTime = 0f;
 
-    private void Awake()
+    private void Start()
     {
-        
+        ObjPool_Enemy.instance.InitPool(enemyPrefabs[0], ObjPool_Enemy.instance.enemyParent, 50);
     }
-    void Start()
-    {
-        
-    }
+
     void Update()
     {
         spawnTime += Time.deltaTime;

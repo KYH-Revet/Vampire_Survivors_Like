@@ -21,7 +21,7 @@ public class ObjPool_Enemy : MonoBehaviour, IObjPooling
 
     [Header("Enemy Pool")]
     [SerializeField]
-    List<GameObject>[] enemyPool;
+    List<List<GameObject>> enemyPool;
     public Transform enemyParent;
     public int poolIdx = 0;
     
@@ -31,7 +31,7 @@ public class ObjPool_Enemy : MonoBehaviour, IObjPooling
         Instance();
 
         // Initialize Pools
-        enemyPool = new List<GameObject>[] { new List<GameObject>(), new List<GameObject>() };
+        enemyPool = new List<List<GameObject>>() { new List<GameObject>(), new List<GameObject>() };
     }
 
     public void InitPool(GameObject prefab, Transform parent, int poolSize)
