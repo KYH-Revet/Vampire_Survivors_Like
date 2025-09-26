@@ -14,10 +14,10 @@ public class ObjPool_Enemy : MonoBehaviour, IObjPooling
             Destroy(gameObject);
     }
 
-    [Header("Enemy Obj")]
-    GameObject enemyPrefab;
+    [Header("Enemy Pools")]
+    public GameObject enemyPrefab;
     public int expPoolSize = 30;
-    private int expPoolSizeMax = 100;
+    public int expPoolSizeMax = 50;    
 
     [Header("Enemy Pool")]
     [SerializeField]
@@ -34,6 +34,7 @@ public class ObjPool_Enemy : MonoBehaviour, IObjPooling
         enemyPool = new List<List<GameObject>>() { new List<GameObject>(), new List<GameObject>() };
     }
 
+    public void InitPool(Transform parent) { }
     public void InitPool(GameObject prefab, Transform parent, int poolSize)
     {
         if (prefab == null)

@@ -37,7 +37,10 @@ public class GameManager : MonoBehaviour
 
     // Timers
     public float playTime = 0f;    
-    public float testLevelUpTimer = 0f; // For testing level up
+    
+    // Item Pool
+    public List<ObjPool> itemPools;
+    public Transform itemParent;
 
     // Unity Functions
     void Awake()
@@ -49,18 +52,20 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
+        PlayTimeUpdate();
+    }
+
+    // Play time update
+    void PlayTimeUpdate()
+    {
+        // Only update play time when the game is in the Playing state
+        if (gameState != GameState.Playing)
+            return;
+
         playTime += Time.deltaTime;
+
+        // Update UI
         UIManager.instance.UpdatePlayTime(playTime);
-
-        
-        testLevelUpTimer += Time.deltaTime;
-        if(testLevelUpTimer >= 5f) // Every 5 seconds
-        {
-            testLevelUpTimer = 0f;
-
-            // Exp test
-            AddExp(10);
-        }
     }
 
     // Change Game State

@@ -34,6 +34,7 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
         InitPool(obj_Exp, expParent,  expPoolSize);
     }
 
+    public void InitPool(Transform parent) { }
     public void InitPool(GameObject prefab, Transform parent, int poolSize)
     {
         if(prefab == null)
@@ -58,7 +59,7 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
             obj.SetActive(true);
         }
         else
-            obj = Instantiate(obj_Exp, expParent);     
+            obj = Instantiate(obj_Exp, expParent);
         return obj;
     }
     public void ReturnToPool(GameObject obj)
