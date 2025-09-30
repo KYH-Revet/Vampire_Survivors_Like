@@ -78,4 +78,14 @@ public class ObjPool_ItemExp : MonoBehaviour, IObjPooling
             Destroy(obj);
         expPool.Clear();
     }
+
+    public void SlowInitPool(Transform parent, float time)
+    {
+        SlowInitCoroutine(parent, time);
+    }
+
+    IEnumerator SlowInitCoroutine(Transform parent, float time)
+    {
+        yield return new WaitForSeconds(time);
+    }
 }

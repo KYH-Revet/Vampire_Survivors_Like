@@ -943,8 +943,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d24453d8311569408706d5114655d90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPool: {fileID: 0}
-  enemyParent: {fileID: 0}
+  enemyPool: {fileID: 11400000, guid: a31073c824638fb458a2b3ac5b8b607d, type: 2}
+  enemyParent: {fileID: 657542660}
 --- !u!1 &791232658
 GameObject:
   m_ObjectHideFlags: 0
@@ -18752,6 +18752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23d286599675cca45a71d25464dc0322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyPrefabs: []
 --- !u!4 &2029757244
 Transform:
   m_ObjectHideFlags: 0

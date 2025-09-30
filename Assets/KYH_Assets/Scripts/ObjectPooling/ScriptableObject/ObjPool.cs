@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -8,16 +10,17 @@ using UnityEngine.Pool;
 
 // ScriptableObject for Object Pool
 [CreateAssetMenu(fileName = "ObjPool", menuName = "ScriptableObjects/ObjPool", order = 1)]
-public class ObjPool : ScriptableObject, IObjPooling
+public class ObjPool : ScriptableObject, IObjPooling, IObservable<ObjPool>
 {
     [Header("Object Pool Settings")]
     [SerializeField] GameObject prefab;
     public GameObject _prefab { get { return prefab; } }
-    public int poolStartSize;
+    [SerializeField] int poolStartSize;
     [SerializeField] int poolSizeMax;
 
     Queue<GameObject> pool;
 
+    // Interface Implementation
     public void InitPool(Transform parent)
     {
         // Exception Handling
@@ -30,15 +33,11 @@ public class ObjPool : ScriptableObject, IObjPooling
         // Clear existing pool if it exists
         if (pool != null)
             ClearPool();
-
         // Initialize Pool
         pool = new Queue<GameObject>();
         for (int i = 0; i < poolStartSize; i++)
-        {
-            GameObject obj = Instantiate(prefab, parent);
-            obj.SetActive(false);
-            pool.Enqueue(obj);
-        }
+            CreateInstance(parent);
+
     }
     /// <summary>
     /// Retrieves an object from the pool.
@@ -75,10 +74,52 @@ public class ObjPool : ScriptableObject, IObjPooling
         else
             Destroy(obj);
     }
+
     public void ClearPool()
     {
+        foreach (var observer in observers)
+            observer.OnNext(this);
+
         while (pool.Count > 0)
             Destroy(pool.Dequeue());
         pool.Clear();
+    }
+    public void SlowInitPool(Transform parent, float time)
+    {
+        // Clear existing pool if it exists
+        if (pool != null)
+            ClearPool();
+        // Initialize Pool
+        SlowInitCoroutine(parent, time);
+    }
+
+    // Private Helper Methods
+    void CreateInstance(Transform parent)
+    {
+        // Instantiate and add to pool
+        GameObject obj = Instantiate(prefab, parent);
+        obj.SetActive(false);
+        pool.Enqueue(obj);
+
+        // Set up observer pattern
+        IPoolSubscriber sub = obj.GetComponent<IPoolSubscriber>();
+        sub.SetPool(this);
+        sub.SetSubscription(Subscribe(sub));
+    }
+    IEnumerator SlowInitCoroutine(Transform parent, float cycleTime)
+    {
+        while (pool.Count < poolStartSize)
+        {
+            CreateInstance(parent);
+            yield return new WaitForSeconds(cycleTime);
+        }
+    }
+
+    // IObservable Implementation
+    List<IObserver<ObjPool>> observers = new List<IObserver<ObjPool>>();
+    public IDisposable Subscribe(IObserver<ObjPool> observer)
+    {
+        observers.Add(observer);
+        return new Unsubscriber<ObjPool>(observers, observer);        
     }
 }

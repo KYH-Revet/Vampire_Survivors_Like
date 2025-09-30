@@ -8,4 +8,5 @@ public interface IObjPooling
     GameObject GetPooledObject();
     void ReturnToPool(GameObject obj);
     void ClearPool();
+    void SlowInitPool(Transform parent, float time);
 }

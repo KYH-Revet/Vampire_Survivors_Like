@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ObjPool 1
   m_EditorClassIdentifier: 
   prefab: {fileID: 5078509791981561427, guid: eb926b9874adda5458d7f4fb948d3b1e, type: 3}
-  poolSize: 10
+  poolStartSize: 50
+  poolSizeMax: 100

@@ -78,4 +78,9 @@ public class ObjPool_Enemy : MonoBehaviour, IObjPooling
             Destroy(obj);
         enemyPool[poolIdx].Clear();
     }
+
+    public void SlowInitPool(Transform parent, float time)
+    {
+        ((IObjPooling)instance).SlowInitPool(parent, time);
+    }
 }

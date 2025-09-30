@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
 
-public class Enemy : Character
+public class Enemy : Character, IPoolSubscriber
 {
     [Header("Enemy Stats")]
     [SerializeField]
@@ -105,7 +106,7 @@ public class Enemy : Character
         exp.transform.position = transform.position;
 
         // Return to object pool
-        gameObject.SetActive(false);
+        _pool.ReturnToPool(gameObject);
     }
     public override void HpControl(int value, HpChangeType hpChangeType)
     {
@@ -148,5 +149,32 @@ public class Enemy : Character
         {
             lastAttackTime = 0f;
         }
+    }
+
+
+    // IObserver Implementation for Object Pooling
+    IDisposable _subscription;
+    ObjPool _pool;
+    public void SetSubscription(IDisposable subscription)
+    {
+        _subscription?.Dispose();
+        _subscription = subscription;
+    }
+    public void SetPool(ObjPool pool)
+    {
+        _pool = pool;
+    }
+    public void OnCompleted()
+    {
+        _pool.ReturnToPool(gameObject);
+        _subscription.Dispose();
+    }
+    public void OnError(Exception error)
+    {
+        throw new NotImplementedException();
+    }
+    public void OnNext(ObjPool value)
+    {
+        throw new NotImplementedException();
     }
 }
