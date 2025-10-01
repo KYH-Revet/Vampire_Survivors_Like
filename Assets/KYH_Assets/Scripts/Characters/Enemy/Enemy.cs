@@ -14,6 +14,7 @@ public class Enemy : Character, IPoolSubscriber
     public int speed = 3;
     public int damage = 5;
     public float attackRange = 1.5f;
+    private bool isRespawn = true;
 
     [Header("Timers")]
     // Time when the enemy was spawned
@@ -43,7 +44,10 @@ public class Enemy : Character, IPoolSubscriber
         switch (enemyState)
         {
             case State.live:
+                
                 Move();
+                if (lastAttackTime <= attackInterval)
+                    lastAttackTime += Time.deltaTime;
 
                 // Auto destroy after 10 seconds (For test)
                 if (GameManager.instance.playTime - bornTime > 10f)
@@ -51,9 +55,6 @@ public class Enemy : Character, IPoolSubscriber
                     enemyState = State.dead;
                     GetComponent<Animator>().SetTrigger("Dead");
                 }
-
-                if (lastAttackTime <= attackInterval)
-                    lastAttackTime += Time.deltaTime;
                 break;
             case State.dead:
                 destroyTimer -= Time.deltaTime;
@@ -75,18 +76,17 @@ public class Enemy : Character, IPoolSubscriber
         enemyState = State.live;
     }
 
-    // Start is called before the first frame update
+    // Unity Functions
     void Start()
     {
         Initialize();
     }
-
-    // Update is called once per frame
     void Update()
     {
         StateMachine();
     }
 
+    // Enemy Behaviors
     protected override void Move()
     {
         Vector2 dir = (Player.instance.transform.position - transform.position).normalized;
@@ -101,13 +101,21 @@ public class Enemy : Character, IPoolSubscriber
     }
     protected override void Dead()
     {
+        // Change State
+        enemyState = State.dead;
+
         // Drop Exp and Item
         GameObject exp = ObjPool_ItemExp.instance.GetPooledObject();
         exp.transform.position = transform.position;
 
-        // Return to object pool
-        _pool.ReturnToPool(gameObject);
+        // Return to Pool or Destroy
+        if (isRespawn)
+            _pool.Release(gameObject);
+        else
+            Destroy(gameObject);
     }
+
+    // HP Control
     public override void HpControl(int value, HpChangeType hpChangeType)
     {
         if (enemyState == State.live)
@@ -131,6 +139,7 @@ public class Enemy : Character, IPoolSubscriber
         }
     }
 
+    // Attack Player
     public void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") && enemyState == State.live)
@@ -166,8 +175,12 @@ public class Enemy : Character, IPoolSubscriber
     }
     public void OnCompleted()
     {
-        _pool.ReturnToPool(gameObject);
+        // Unsubscribe and clean up references
         _subscription.Dispose();
+        _pool = null;
+
+        // No more respawn
+        isRespawn = false;
     }
     public void OnError(Exception error)
     {

@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item_Drop : Item
+public class Item_Drop : Item, IPoolSubscriber
 {
     protected bool isCollected;
     protected int minSpeed;
@@ -48,5 +49,31 @@ public class Item_Drop : Item
                 ObjPool_ItemExp.instance.ReturnToPool(gameObject);
                 break;
         }
+    }
+
+    // IObserver Implementation for Object Pooling
+    IDisposable _subscription;
+    ObjPool _pool;
+    public void SetSubscription(IDisposable subscription)
+    {
+        _subscription.Dispose();
+        _subscription = subscription;
+    }
+    public void SetPool(ObjPool pool)
+    {
+        _pool = pool;
+    }
+    public void OnCompleted()
+    {
+        _pool.Release(gameObject);
+        _subscription.Dispose();
+    }
+    public void OnError(Exception error)
+    {
+        throw new NotImplementedException();
+    }
+    public void OnNext(ObjPool value)
+    {
+        throw new NotImplementedException();
     }
 }

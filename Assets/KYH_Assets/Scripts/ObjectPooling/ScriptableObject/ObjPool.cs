@@ -10,6 +10,7 @@ using UnityEngine.Pool;
 
 // ScriptableObject for Object Pool
 [CreateAssetMenu(fileName = "ObjPool", menuName = "ScriptableObjects/ObjPool", order = 1)]
+/*
 public class ObjPool : ScriptableObject, IObjPooling, IObservable<ObjPool>
 {
     [Header("Object Pool Settings")]
@@ -74,11 +75,10 @@ public class ObjPool : ScriptableObject, IObjPooling, IObservable<ObjPool>
         else
             Destroy(obj);
     }
-
     public void ClearPool()
     {
         foreach (var observer in observers)
-            observer.OnNext(this);
+            observer.OnCompleted();
 
         while (pool.Count > 0)
             Destroy(pool.Dequeue());
@@ -121,5 +121,73 @@ public class ObjPool : ScriptableObject, IObjPooling, IObservable<ObjPool>
     {
         observers.Add(observer);
         return new Unsubscriber<ObjPool>(observers, observer);        
+    }
+}
+*/
+
+public class ObjPool : ScriptableObject, IObjectPool<GameObject>, IObservable<ObjPool>
+{
+    [Header("Object Pool Settings")]
+    [SerializeField] GameObject prefab;
+    public GameObject _prefab { get { return prefab; } }
+    Transform parent;
+
+    [SerializeField] int poolStartSize;
+    [SerializeField] int poolSizeMax;
+
+    ObjectPool<GameObject> pool;
+
+    public void InitPool()
+    {
+        pool = new ObjectPool<GameObject>(
+            () =>
+            {
+                // Instantiate and add to pool
+                GameObject obj = Instantiate(prefab, parent);
+                obj.SetActive(false);
+
+                // Set up observer pattern
+                IPoolSubscriber sub = obj.GetComponent<IPoolSubscriber>();
+                sub.SetPool(this);
+                sub.SetSubscription(Subscribe(sub));
+                return obj;
+            },                                  // Create
+            obj => { obj.SetActive(true); },    // Get
+            obj => { obj.SetActive(false); },   // Release
+            obj => { Destroy(obj); },           // Destroy
+            true, poolStartSize, poolSizeMax);  // Collection Check, Default Capacity, Max Size
+    }
+    public void InitPool(Transform parent)
+    {
+        this.parent = parent;
+        InitPool();
+    }
+
+    // IObjectPool Implementation
+    public int CountInactive => throw new NotImplementedException();
+    public GameObject Get()
+    {
+        return pool.Get();
+    }
+    public PooledObject<GameObject> Get(out GameObject v)
+    {
+        v = pool.Get();
+        return new PooledObject<GameObject>();
+    }
+    public void Release(GameObject element)
+    {
+        throw new NotImplementedException();
+    }
+    public void Clear()
+    {
+        throw new NotImplementedException();
+    }
+
+    // IObservable Implementation
+    List<IObserver<ObjPool>> observers = new List<IObserver<ObjPool>>();
+    public IDisposable Subscribe(IObserver<ObjPool> observer)
+    {
+        observers.Add(observer);
+        return new Unsubscriber<ObjPool>(observers, observer);
     }
 }
