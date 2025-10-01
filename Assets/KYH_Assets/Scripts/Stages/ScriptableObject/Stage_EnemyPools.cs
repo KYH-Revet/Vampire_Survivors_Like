@@ -7,21 +7,21 @@ public class Stage_EnemyPools : ScriptableObject
 {
     [Header("Enemy Pools")]
     public List<ObjPool> enemyPools;
-    int poolIdx = 0;
     
-    public void InitializeEnemyPools(Transform parent)
+    public void InitializeEnemyPools(Transform parent, int poolIdx)
     {
         // Exception Handling
         if (poolIdx > enemyPools.Count)
         {
+            Debug.Log(enemyPools.Count + ", " + poolIdx);
             Debug.LogWarning("All enemy pools have been initialized.");
             return;
         }
-
+        Debug.Log("Initializing Enemy Pool: " + enemyPools[poolIdx]._prefab.name);
         // Initialize the next enemy pool
         enemyPools[poolIdx++].InitPool(parent);
     }
-    public GameObject GetEnemyInPool()
+    public GameObject GetEnemyInPool(int poolIdx)
     {
         // Exception Handling
         if (poolIdx > enemyPools.Count)

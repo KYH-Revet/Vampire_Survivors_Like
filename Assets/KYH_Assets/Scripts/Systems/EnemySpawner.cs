@@ -11,7 +11,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        ObjPool_Enemy.instance.InitPool(enemyPrefabs[0], ObjPool_Enemy.instance.enemyParent, 50);
+        //ObjPool_Enemy.instance.InitPool(enemyPrefabs[0], ObjPool_Enemy.instance.enemyParent, 50);
     }
 
     void Update()

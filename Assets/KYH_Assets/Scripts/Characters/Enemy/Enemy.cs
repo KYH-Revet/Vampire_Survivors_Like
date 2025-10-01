@@ -67,12 +67,15 @@ public class Enemy : Character, IPoolSubscriber
     // Initialize enemy stats based on game time
     public void Initialize()
     {
+        // Stats
         int hp = GameManager.instance.playTime == 0 ? maxHealth : maxHealth + (int)(GameManager.instance.playTime / 60) * 10;
         stats = new CharacterStats(hp, 0, speed, damage);
 
+        // Timer
         bornTime = GameManager.instance.playTime;
         lastAttackTime = attackInterval;
 
+        // State
         enemyState = State.live;
     }
 

@@ -156,6 +156,8 @@ public class ObjPool : ScriptableObject, IObjectPool<GameObject>, IObservable<Ob
             obj => { obj.SetActive(false); },   // Release
             obj => { Destroy(obj); },           // Destroy
             true, poolStartSize, poolSizeMax);  // Collection Check, Default Capacity, Max Size
+
+        Debug.Log($"Initialized pool with {poolStartSize} objects of {prefab.name}");
     }
     public void InitPool(Transform parent)
     {
@@ -164,7 +166,7 @@ public class ObjPool : ScriptableObject, IObjectPool<GameObject>, IObservable<Ob
     }
 
     // IObjectPool Implementation
-    public int CountInactive => throw new NotImplementedException();
+    public int CountInactive => pool.CountAll - pool.CountActive;
     public GameObject Get()
     {
         return pool.Get();
@@ -174,13 +176,21 @@ public class ObjPool : ScriptableObject, IObjectPool<GameObject>, IObservable<Ob
         v = pool.Get();
         return new PooledObject<GameObject>();
     }
-    public void Release(GameObject element)
+    public void Release(GameObject obj)
     {
-        throw new NotImplementedException();
+        if(CountInactive >= poolSizeMax)
+            Destroy(obj);
+        else
+            pool.Release(obj);
     }
     public void Clear()
     {
-        throw new NotImplementedException();
+        // Notify observers before clearing
+        foreach (var observer in observers)
+            observer.OnCompleted();
+
+        // Clear the pool
+        pool.Dispose();
     }
 
     // IObservable Implementation
